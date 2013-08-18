@@ -1,6 +1,6 @@
 require('sylvester')
 
-function StreamingMatrixProduct(options) {
+function MatrixProduct(options) {
 
   this.product = []
 
@@ -14,42 +14,43 @@ function StreamingMatrixProduct(options) {
   }
 }
 
-StreamingMatrixProduct.prototype.addRowAndColumn = function(options) {
+MatrixProduct.prototype.addRowAndColumn = function(options) {
 
   for(var c = 0; c < options.lhsColumn.length; c++)
     for(var r = 0; r < options.rhsRow.length; r++)
       this.product[c][r] += options.lhsColumn[c] * options.rhsRow[r]
 }
 
-function StreamingMultipleRegression(options) {
+function Regression(options) {
 
-  this.transposeOfXTimesX = new StreamingMatrixProduct({
-    numRows: options.numIndependentVariables,
-    numColumns: options.numIndependentVariables
+  this.transposeOfXTimesX = new MatrixProduct({
+    numRows: options.numX,
+    numColumns: options.numX
   })
 
-  this.transposeOfXTimesY = new StreamingMatrixProduct({
-    numRows: options.numIndependentVariables,
-    numColumns: options.numDependentVariables
+  this.transposeOfXTimesY = new MatrixProduct({
+    numRows: options.numX,
+    numColumns: options.numY
   })
 }
 
-StreamingMultipleRegression.prototype.addObservation = function(options) {
+Regression.prototype.addObservation = function(options) {
 
   this.transposeOfXTimesX.addRowAndColumn({
-    lhsColumn: options.independentVariables,
-    rhsRow: options.independentVariables
+    lhsColumn: options.x,
+    rhsRow: options.x
   })
 
   this.transposeOfXTimesY.addRowAndColumn({
-    lhsColumn: options.independentVariables,
-    rhsRow: options.dependentVariables
+    lhsColumn: options.x,
+    rhsRow: options.y
   })
 
+  // Adding an observation invalidates our coefficients.
   delete this.coefficients
 }
 
-StreamingMultipleRegression.prototype.calculateCoefficients = function() {
+Regression.prototype.calculateCoefficients = function() {
 
   var xTx = $M(this.transposeOfXTimesX.product)
     , xTy = $M(this.transposeOfXTimesY.product)
@@ -60,7 +61,7 @@ StreamingMultipleRegression.prototype.calculateCoefficients = function() {
 // Hypothesize a particular row of dependent variables
 // from a row of independent variables.
 // Lazily recalculate coefficients if necessary.
-StreamingMultipleRegression.prototype.hypothesize = function(options) {
+Regression.prototype.hypothesize = function(options) {
 
   if(!this.coefficients) this.calculateCoefficients()
 
@@ -72,12 +73,12 @@ StreamingMultipleRegression.prototype.hypothesize = function(options) {
     for(var y = 0; y < coefficientRow.length; y++) {
 
       hypothesis[y] = (hypothesis[y] || 0) +
-        coefficientRow[y] * options.independentVariables[x]
+        coefficientRow[y] * options.x[x]
     }
   }
 
   return hypothesis
 }
 
-exports.StreamingMatrixProduct = StreamingMatrixProduct
-exports.StreamingMultipleRegression = StreamingMultipleRegression
+exports.MatrixProduct = MatrixProduct
+exports.Regression = Regression

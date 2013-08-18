@@ -5,37 +5,25 @@ This is an implementation of multiple regression in JavaScript.  It's useful if 
 
 # QuickStart
 
-    var regression = new StreamingMultipleRegression({
-      numIndependentVariables: 2,
-      numDependentVariables: 1
-    })
+    var regression = new Regression({ numX: 2, numY: 1 })
 
-    regression.addObservation({
-      dependentVariables: [100],
-      independentVariables: [10, 11]
-    })
-
-    regression.addObservation({
-      independentVariables: [9, 12],
-      dependentVariables: [99]
-    })
+    regression.addObservation({ x: [10, 11] y: [100] })
+    regression.addObservation({ x: [9, 12], y: [99] })
 
     // The following returns [[5.285714285714221], [4.285714285714334]]:
     regression.calculateCoefficients()
 
-    regression.addObservation({
-      independentVariables: [8, 15],
-      dependentVariables: [80]
-    })
+    regression.addObservation({ x: [8, 15], y: [80] })
 
     // The following returns [[10.54874267998622], [-0.15811229762311996]]:
     regression.calculateCoefficients()
 
     // We can also calculate points on the hypothesis.
+    //
     // The following returns: [ 10.23251808473998 ]
-    regression.hypothesize({ independentVariables: [1, 2] })
+    regression.hypothesize({ x: [1, 2] })
 
-# Formula
+# Mechanics
 
 To calculate multiple regression, we use the following formula:
 

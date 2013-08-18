@@ -1,6 +1,6 @@
-var smg = require('./smg.js')
-  , StreamingMatrixProduct = smg.StreamingMatrixProduct
-  , StreamingMultipleRegression = smg.StreamingMultipleRegression
+var smg = require('./sml.js')
+  , MatrixProduct = smg.MatrixProduct
+  , Regression = smg.Regression
 
 require('sylvester')
 
@@ -30,7 +30,7 @@ function testMatrixProduct(test, lhs, rhs) {
     , sylvesterRhs = $M(rhs)
     , sylvesterProduct = sylvesterLhs.multiply(sylvesterRhs)
     , options = { numRows: lhs.length, numColumns: rhs[0].length }
-    , streamingProduct = new StreamingMatrixProduct(options)
+    , streamingProduct = new MatrixProduct(options)
 
   for(var x = 0; x < rhs.length; x++) {
 
@@ -59,12 +59,12 @@ exports['should calculate streaming regression'] = function(test) {
 
   var x = [[1,2,3],[4,5,6],[7,8,9],[10,11,12]]
     , y = [[13,14],[15,16],[17,18],[19,20]]
-    , options = { numIndependentVariables: 3, numDependentVariables: 2 }
-    , streamingRegression = new StreamingMultipleRegression(options)
+    , options = { numX: 3, numY: 2 }
+    , streamingRegression = new Regression(options)
 
   addObservations(streamingRegression, {
-    independentVariables: x,
-    dependentVariables: y
+    x: x,
+    y: y
   })
 
   var streamingCoefficients = streamingRegression.calculateCoefficients()
@@ -100,20 +100,20 @@ exports['should construct hypothesis'] = function(test) {
     [1,0]
   ]
 
-  var regression = new StreamingMultipleRegression({
-    numIndependentVariables: 4,
-    numDependentVariables: 1
+  var regression = new Regression({
+    numX: 4,
+    numY: 1
   })
 
   addObservations(regression, {
-    independentVariables: x,
-    dependentVariables: y
+    x: x,
+    y: y
   })
 
-  var h00 = regression.hypothesize({ independentVariables: [1,0,0,0] })
-    , h01 = regression.hypothesize({ independentVariables: [1,0,1,0] })
-    , h10 = regression.hypothesize({ independentVariables: [1,1,0,0] })
-    , h11 = regression.hypothesize({ independentVariables: [1,1,1,1] })
+  var h00 = regression.hypothesize({ x: [1,0,0,0] })
+    , h01 = regression.hypothesize({ x: [1,0,1,0] })
+    , h10 = regression.hypothesize({ x: [1,1,0,0] })
+    , h11 = regression.hypothesize({ x: [1,1,1,1] })
 
   test.ok(JSON.stringify(h00), JSON.stringify([1,1]))
   test.ok(JSON.stringify(h01), JSON.stringify([0,1]))
@@ -136,14 +136,14 @@ exports['should calculate coefficients'] = function(test) {
 
   var y = [[1],[0],[0],[1]]
 
-  var regression = new StreamingMultipleRegression({
-    numIndependentVariables: 4,
-    numDependentVariables: 1
+  var regression = new Regression({
+    numX: 4,
+    numY: 1
   })
 
   addObservations(regression, {
-    independentVariables: x,
-    dependentVariables: y
+    x: x,
+    y: y
   })
 
   var coefficients = regression.calculateCoefficients()
@@ -157,20 +157,20 @@ exports['should calculate coefficients'] = function(test) {
 
 exports['should discard old coefficients'] = function(test) {
 
-  var regression = new StreamingMultipleRegression({
-    numIndependentVariables: 1,
-    numDependentVariables: 1
+  var regression = new Regression({
+    numX: 1,
+    numY: 1
   })
 
   regression.addObservation({
-    dependentVariables: [1],
-    independentVariables: [1]
+    y: [1],
+    x: [1]
   })
   var oldCoefficients = regression.calculateCoefficients()
 
   regression.addObservation({
-    dependentVariables: [0],
-    independentVariables: [1]
+    y: [0],
+    x: [1]
   })
   var newCoefficients = regression.calculateCoefficients()
 
@@ -180,10 +180,10 @@ exports['should discard old coefficients'] = function(test) {
 
 function addObservations(streamingRegression, options) {
 
-  for(var x = 0; x < options.independentVariables.length; x++)
+  for(var x = 0; x < options.x.length; x++)
     streamingRegression.addObservation({
-      independentVariables: options.independentVariables[x], 
-      dependentVariables: options.dependentVariables[x] 
+      x: options.x[x], 
+      y: options.y[x] 
     })
 }
 
