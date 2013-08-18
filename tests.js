@@ -1,6 +1,8 @@
-var StreamingMatrixProduct = require('./StreamingMatrixProduct.js')
-  , StreamingMultipleRegression = require('./StreamingMultipleRegression.js')
-  , sylvester = require('sylvester')
+var smg = require('./smg.js')
+  , StreamingMatrixProduct = smg.StreamingMatrixProduct
+  , StreamingMultipleRegression = smg.StreamingMultipleRegression
+
+require('sylvester')
 
 exports['should calculate product of 1x1 * 1x1'] = function(test) {
   testMatrixProduct(test, [[1]], [[2]])
