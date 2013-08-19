@@ -62,10 +62,7 @@ exports['should calculate streaming regression'] = function(test) {
     , options = { numX: 3, numY: 2 }
     , streamingRegression = new Regression(options)
 
-  addObservations(streamingRegression, {
-    x: x,
-    y: y
-  })
+  addObservations(streamingRegression, { x: x, y: y })
 
   var streamingCoefficients = streamingRegression.calculateCoefficients()
 
@@ -100,15 +97,9 @@ exports['should construct hypothesis'] = function(test) {
     [1,0]
   ]
 
-  var regression = new Regression({
-    numX: 4,
-    numY: 1
-  })
+  var regression = new Regression({ numX: 4, numY: 1 })
 
-  addObservations(regression, {
-    x: x,
-    y: y
-  })
+  addObservations(regression, { x: x, y: y })
 
   var h00 = regression.hypothesize({ x: [1,0,0,0] })
     , h01 = regression.hypothesize({ x: [1,0,1,0] })
@@ -135,16 +126,9 @@ exports['should calculate coefficients'] = function(test) {
   ]
 
   var y = [[1],[0],[0],[1]]
+    , regression = new Regression({ numX: 4, numY: 1 })
 
-  var regression = new Regression({
-    numX: 4,
-    numY: 1
-  })
-
-  addObservations(regression, {
-    x: x,
-    y: y
-  })
+  addObservations(regression, { x: x, y: y })
 
   var coefficients = regression.calculateCoefficients()
 
@@ -157,24 +141,28 @@ exports['should calculate coefficients'] = function(test) {
 
 exports['should discard old coefficients'] = function(test) {
 
-  var regression = new Regression({
-    numX: 1,
-    numY: 1
-  })
+  var regression = new Regression({ numX: 1, numY: 1 })
 
-  regression.addObservation({
-    y: [1],
-    x: [1]
-  })
+  regression.addObservation({ y: [1], x: [1] })
   var oldCoefficients = regression.calculateCoefficients()
 
-  regression.addObservation({
-    y: [0],
-    x: [1]
-  })
+  regression.addObservation({ y: [0], x: [1] })
   var newCoefficients = regression.calculateCoefficients()
 
   test.ok(JSON.stringify(newCoefficients) !== JSON.stringify(oldCoefficients))
+  test.done()
+}
+
+exports['should return null when inverse is incalculable'] = function(test) {
+
+  var regression = new Regression({ numX: 1, numY: 1 })
+  regression.addObservation({ y: [0], x: [0] })
+  regression.addObservation({ y: [0], x: [0] })
+
+  test.ok(!regression.coefficients)
+  test.ok(!regression.calculateCoefficients())
+  test.ok(!regression.hypothesize({ x: [0] }))
+
   test.done()
 }
 
@@ -186,4 +174,3 @@ function addObservations(streamingRegression, options) {
       y: options.y[x] 
     })
 }
-

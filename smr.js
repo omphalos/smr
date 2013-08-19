@@ -56,6 +56,12 @@
 
     var xTx = $M(this.transposeOfXTimesX.product)
       , xTy = $M(this.transposeOfXTimesY.product)
+      , inverse = xTx.inverse()
+
+    if(!inverse) {
+      delete this.coefficients
+      return null
+    }
 
     return this.coefficients = xTx.inverse().multiply(xTy).elements
   }
@@ -65,7 +71,7 @@
   // Lazily recalculate coefficients if necessary.
   Regression.prototype.hypothesize = function(options) {
 
-    if(!this.coefficients) this.calculateCoefficients()
+    if(!this.coefficients && !this.calculateCoefficients()) return null
 
     var hypothesis = []
 
