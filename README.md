@@ -1,7 +1,7 @@
 smr
 ===
 
-This is an implementation of streaming multiple regression in JavaScript.  It's useful if you want to run multiple regression, and it works if you want to run it in real-time or over very large datasets that won't fit into memory all at once.
+This is an implementation of multiple regression in JavaScript.  It is streaming, which means that you can incrementally add observations and recalculate coefficients on the fly, without having to re-iterate over your dataset.  This is particularly useful if you want to run multiple regression in real-time or over very large datasets that won't fit into memory all at once.
 
 # Quick Start
 
@@ -51,8 +51,8 @@ This we means we don't need to keep individual observations in memory, but only 
 
 Calculations are verified against [sylvester](https://github.com/jcoglan/sylvester).  The unit tests use [nodeunit](https://github.com/caolan/nodeunit).  You can set everything up with:
 
-    git clone https://github.com/omhpalos/StreamingMultipleRegression
-    cd StreamingMultipleRegression
+    git clone https://github.com/omhpalos/smr
+    cd smr
     npm install
     npm install -g nodeunit
 
