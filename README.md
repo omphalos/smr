@@ -1,7 +1,7 @@
 smr
 ===
 
-This is an implementation of streaming multiple regression in JavaScript.  It's useful if you want to use JavaScript to run multiple regression in real-time or over very large datasets that won't fit into memory all at once.
+This is an implementation of streaming multiple regression in JavaScript.  It's useful if you want to run multiple regression, and it works if you want to run it in real-time or over very large datasets that won't fit into memory all at once.
 
 # Quick Start
 
@@ -16,8 +16,9 @@ Then:
 
 In the browser:
 
+    <script src="https://raw.github.com/jcoglan/sylvester/master/src/sylvester.js"></script>
     <script src="https://raw.github.com/jcoglan/sylvester/master/src/matrix.js"></script>
-    <script src="https://raw.github.com/omphalos/smr/master/smr.js"></script>
+    <script src="https://raw.github.com/omphalos/smr.js"></script>
 
 # Example
 
@@ -58,4 +59,3 @@ Calculations are verified against [sylvester](https://github.com/jcoglan/sylvest
 Then you can run unit tests with:
 
     nodeunit tests.js
-
