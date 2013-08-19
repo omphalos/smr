@@ -51,7 +51,7 @@ This we means we don't need to keep individual observations in memory, but only 
 
 Calculations are verified against [sylvester](https://github.com/jcoglan/sylvester).  The unit tests use [nodeunit](https://github.com/caolan/nodeunit).  You can set everything up with:
 
-    git clone https://github.com/omhpalos/smr
+    git clone https://github.com/omphalos/smr
     cd smr
     npm install
     npm install -g nodeunit
