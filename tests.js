@@ -1,6 +1,6 @@
-var smg = require('./sml.js')
-  , MatrixProduct = smg.MatrixProduct
-  , Regression = smg.Regression
+var smr = require('./smr.js')
+  , MatrixProduct = smr.MatrixProduct
+  , Regression = smr.Regression
 
 require('sylvester')
 
