@@ -10,9 +10,7 @@ From Node.js:
     npm install smr
     node
 
-Then:
-
-    var Regression = require('smr').Regression
+    var smr = require('smr')
 
 In the browser:
 
@@ -21,7 +19,7 @@ In the browser:
 
 # Example
 
-    var regression = new Regression({ numX: 2, numY: 1 })
+    var regression = new smr.Regression({ numX: 2, numY: 1 })
 
     regression.push({ x: [10, 11], y: [100] })
     regression.push({ x: [9, 12], y: [99] })

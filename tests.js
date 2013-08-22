@@ -156,3 +156,17 @@ function addObservations(streamingRegression, options) {
       y: options.y[x] 
     })
 }
+
+// Test for issue in numericjs library.
+exports['should regress underdetermined system'] = function(test) {
+
+  var reg = new Regression({ numX: 2, numY: 1})
+  reg.push({ x: [1, 2], y: [3] })
+
+  var coefficients = reg.calculateCoefficients()
+    , firstCoefficient = coefficients[0][0]
+    , isNaN = Number.isNaN(firstCoefficient)
+
+  test.ok(!isNaN)
+  test.done()
+}

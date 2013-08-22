@@ -89,4 +89,4 @@
   exports.MatrixProduct = MatrixProduct
   exports.Regression = Regression
 
-})(typeof exports === undefined ? (this.smr = (this.smr || {})) : exports)
+})(typeof exports === 'undefined' ? (this.smr = (this.smr || {})) : exports)
