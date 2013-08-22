@@ -1,8 +1,7 @@
-var smr = require('./smr.js')
+var numeric = require('numeric')
+  , smr = require('./smr.js')
   , MatrixProduct = smr.MatrixProduct
   , Regression = smr.Regression
-
-require('sylvester')
 
 exports['should calculate product of 1x1 * 1x1'] = function(test) {
   testMatrixProduct(test, [[1]], [[2]])
@@ -26,9 +25,7 @@ exports['should calculate product of 2x3 * 3x2'] = function(test) {
 
 function testMatrixProduct(test, lhs, rhs) {
 
-  var sylvesterLhs = $M(lhs)
-    , sylvesterRhs = $M(rhs)
-    , sylvesterProduct = sylvesterLhs.multiply(sylvesterRhs)
+  var numericProduct = numeric.dot(lhs, rhs)
     , options = { numRows: lhs.length, numColumns: rhs[0].length }
     , streamingProduct = new MatrixProduct(options)
 
@@ -49,7 +46,7 @@ function testMatrixProduct(test, lhs, rhs) {
     })
   }
 
-  var expected = JSON.stringify(sylvesterProduct.elements)
+  var expected = JSON.stringify(numericProduct)
     , actual = JSON.stringify(streamingProduct.product)
 
   test.equals(actual, expected)
@@ -65,14 +62,12 @@ exports['should calculate streaming regression'] = function(test) {
   addObservations(streamingRegression, { x: x, y: y })
 
   var streamingCoefficients = streamingRegression.calculateCoefficients()
-
-  var sylvesterResult =
-    // See http://luna.cas.usf.edu/~mbrannic/files/regression/regma.htm  
-    // (X' * X ) ^ -1 * (X' * Y)
-    $M(x).transpose().multiply($M(x)).inverse().multiply(
-    $M(x).transpose().multiply($M(y)))
-
-  var expected = JSON.stringify(sylvesterResult.elements)
+    , xTranspose = numeric.transpose(x)
+    , xTransposeX = numeric.dot(xTranspose, x)
+    , xTransposeY = numeric.dot(xTranspose, y)
+    , pseudoInverse = numeric.echelonize(xTransposeX).I
+    , numericResult = numeric.dot(pseudoInverse, xTransposeY)
+    , expected = JSON.stringify(numericResult)
     , actual = JSON.stringify(streamingCoefficients)
 
   test.equals(actual, expected)
@@ -116,7 +111,7 @@ exports['should construct hypothesis'] = function(test) {
 
 exports['should calculate coefficients'] = function(test) {
 
-  // This is a XOR with a bias and cheap kernel trick:
+  // This is a XOR with a bias and simple kernel:
   // [1,a,b,a*b] for all a,b in (0,0),(0,1),(1,0),(1,1)
   var x = [
     [1,0,0,0],
@@ -150,19 +145,6 @@ exports['should discard old coefficients'] = function(test) {
   var newCoefficients = regression.calculateCoefficients()
 
   test.ok(JSON.stringify(newCoefficients) !== JSON.stringify(oldCoefficients))
-  test.done()
-}
-
-exports['should return null when inverse is incalculable'] = function(test) {
-
-  var regression = new Regression({ numX: 1, numY: 1 })
-  regression.addObservation({ y: [0], x: [0] })
-  regression.addObservation({ y: [0], x: [0] })
-
-  test.ok(!regression.coefficients)
-  test.ok(!regression.calculateCoefficients())
-  test.ok(!regression.hypothesize({ x: [0] }))
-
   test.done()
 }
 

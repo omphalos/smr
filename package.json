@@ -1,6 +1,6 @@
 {
   "name": "smr",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Streaming implementation of multiple regression.",
   "main": "./smr.js",
   "repository": {
@@ -8,12 +8,14 @@
     "url": "https://github.com/omphalos/smr.git"
   },
   "dependencies" : {
-    "sylvester": ">=0.0.21"
+    "numeric": ">=1.2.6 <2.0.0"
   },
   "keywords": [
     "machine",
     "learning",
     "linear",
+    "online",
+    "ml",
     "algebra",
     "multiple",
     "regression",

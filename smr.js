@@ -1,6 +1,6 @@
 (function(exports) {
 
-  if(typeof require !== 'undefined') require('sylvester')
+  var numeric = this.numeric || require('numeric')
 
   function MatrixProduct(options) {
 
@@ -22,6 +22,7 @@
       for(var r = 0; r < options.rhsRow.length; r++)
         this.product[c][r] += options.lhsColumn[c] * options.rhsRow[r]
   }
+  MatrixProduct.prototype.push = MatrixProduct.prototype.addRowAndColumn
 
   function Regression(options) {
 
@@ -51,27 +52,24 @@
     // Adding an observation invalidates our coefficients.
     delete this.coefficients
   }
+  Regression.prototype.push = Regression.prototype.addObservation
 
   Regression.prototype.calculateCoefficients = function() {
 
-    var xTx = $M(this.transposeOfXTimesX.product)
-      , xTy = $M(this.transposeOfXTimesY.product)
-      , inverse = xTx.inverse()
+    var xTx = this.transposeOfXTimesX.product
+      , xTy = this.transposeOfXTimesY.product
+      , pseudoInverse = numeric.echelonize(xTx).I
 
-    if(!inverse) {
-      delete this.coefficients
-      return null
-    }
-
-    return this.coefficients = xTx.inverse().multiply(xTy).elements
+    return this.coefficients = numeric.dot(pseudoInverse, xTy)
   }
+  Regression.prototype.calculate = Regression.prototype.calculateCoefficients
 
   // Hypothesize a particular row of dependent variables
   // from a row of independent variables.
   // Lazily recalculate coefficients if necessary.
   Regression.prototype.hypothesize = function(options) {
 
-    if(!this.coefficients && !this.calculateCoefficients()) return null
+    if(!this.coefficients) this.calculateCoefficients()
 
     var hypothesis = []
 
@@ -91,4 +89,4 @@
   exports.MatrixProduct = MatrixProduct
   exports.Regression = Regression
 
-})(typeof exports === undefined ? this : exports)
+})(typeof exports === undefined ? (this.smr = (this.smr || {})) : exports)
