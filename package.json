@@ -1,13 +1,13 @@
 {
   "name": "smr",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "Streaming implementation of multiple regression.",
   "main": "./smr.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/omphalos/smr.git"
   },
-  "dependencies" : {
+  "dependencies": {
     "numeric": ">=1.2.6 <2.0.0"
   },
   "keywords": [
@@ -27,5 +27,6 @@
   "engine": {
     "node": ">=0.8.17"
   },
-  "author": "omphalos"
+  "author": "omphalos",
+  "contributors": [ "Ryan Marcus <ryan@rmarcus.info> (https://rmarcus.info)" ]   
 }

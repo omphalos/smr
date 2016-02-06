@@ -1,5 +1,14 @@
 (function(exports) {
 
+
+  function has(obj, key) {
+    return obj && obj.hasOwnProperty(key)
+  }
+
+  function isArray(obj) {
+    return obj && (obj instanceof Array)
+  }
+
   var numeric = this.numeric || require('numeric')
 
   function MatrixProduct(options) {
@@ -26,6 +35,14 @@
 
   function Regression(options) {
 
+    if (!has(options, "numX"))
+      throw new Error("You must give the width of the X dimension as the property numX")
+
+
+    if (!has(options, "numY"))
+      throw new Error("You must give the width of the X dimension as the property numY")
+
+    
     this.transposeOfXTimesX = new MatrixProduct({
       numRows: options.numX,
       numColumns: options.numX
@@ -39,6 +56,13 @@
 
   Regression.prototype.addObservation = function(options) {
 
+    if ((!has(options, "x")) || (!has(options, "y")))
+      throw new Error("Observation must have x and y values")
+
+
+    if ((!isArray(options.x)) || (!(isArray(options.y))))
+      throw new Error("X and Y must be given as arrays")
+    
     this.transposeOfXTimesX.addRowAndColumn({
       lhsColumn: options.x,
       rhsRow: options.x
@@ -71,6 +95,14 @@
 
     if(!this.coefficients) this.calculateCoefficients()
 
+
+    if (!has(options, "x"))
+      throw new Error("Value to hypothesize must have an 'x' field")
+    
+    if (!isArray(options.x))
+      throw new Error("X value must be given as an array")
+
+    
     var hypothesis = []
 
     for(var x = 0; x < this.coefficients.length; x++) {
