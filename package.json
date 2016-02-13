@@ -1,6 +1,6 @@
 {
   "name": "smr",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "Streaming implementation of multiple regression.",
   "main": "./smr.js",
   "repository": {
