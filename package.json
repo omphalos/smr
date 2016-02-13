@@ -1,14 +1,11 @@
 {
   "name": "smr",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Streaming implementation of multiple regression.",
   "main": "./smr.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/omphalos/smr.git"
-  },
-  "dependencies": {
-    "numeric": ">=1.2.6 <2.0.0"
   },
   "keywords": [
     "machine",
@@ -28,5 +25,39 @@
     "node": ">=0.8.17"
   },
   "author": "omphalos",
-  "contributors": [ "Ryan Marcus <ryan@rmarcus.info> (https://rmarcus.info)" ]   
+  "contributors": [
+    "Ryan Marcus <ryan@rmarcus.info> (https://rmarcus.info)"
+  ],
+  "scripts": {
+    "tape": "./node_modules/.bin/tape ./tests.js",
+    "lint": "./node_modules/.bin/minilint",
+    "cover": "./node_modules/.bin/istanbul cover ./tests.js",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
+    "watch": "./node_modules/.bin/nodemon ./tests.js",
+    "count": "gzip -c smr.min.js | wc -c",
+    "test": "npm run lint; npm run tape; npm run cover; npm run zuul",
+    "bundle": "./node_modules/.bin/browserify smr.js -s smr > bundle.js",
+    "build": "npm run bundle; npm run minify; npm run count; rm bundle.js",
+    "zuul": "./node_modules/.bin/zuul -- tests.js",
+    "minify": "cat bundle.js | ./node_modules/.bin/uglifyjs > smr.min.js",
+    "release": "npm run build && npm run test && ./node_modules/.bin/bumpt"
+  },
+  "bugs": {
+    "url": "https://github.com/omphalos/smr/issues"
+  },
+  "homepage": "https://github.com/omphalos/smr",
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "bumpt": "0.0.4",
+    "coveralls": "^2.11.6",
+    "istanbul": "^0.4.2",
+    "minilint": "0.0.13",
+    "nodemon": "^1.8.1",
+    "tape": "^4.4.0",
+    "uglify-js": "^2.6.1",
+    "zuul": "^3.9.0"
+  },
+  "dependencies": {
+    "numeric": "^1.2.6"
+  }
 }

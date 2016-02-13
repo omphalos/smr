@@ -1,12 +1,14 @@
+'use strict'
+
 console.log('starting')
 
 var smr = require('./smr.js')
-  , dimensions = process.argv.reverse()[0] || 500
-  , x1 = new Array(dimensions).map(function() { return Math.random() })
-  , x2 = new Array(dimensions).map(function() { return Math.random() })
-  , y1 = [Math.random()]
-  , y2 = [Math.random()]
-  , regression = new smr.Regression({ numX: dimensions, numY: 1 })
+var dimensions = process.argv.reverse()[0] || 500
+var x1 = new Array(dimensions).map(function() { return Math.random() })
+var x2 = new Array(dimensions).map(function() { return Math.random() })
+var y1 = [Math.random()]
+var y2 = [Math.random()]
+var regression = new smr.Regression({ numX: dimensions, numY: 1 })
 
 console.log('testing with ' + dimensions + ' dimensions')
 
