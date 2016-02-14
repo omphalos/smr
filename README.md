@@ -26,9 +26,7 @@ From Node.js:
 
     var smr = require('smr')
 
-In the browser:
-
-    <script src="https://raw.github.com/omphalos/smr.js"></script>
+In the browser use [browserify](https://github.com/substack/node-browserify).
 
 # Example
 
