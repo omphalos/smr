@@ -2,6 +2,7 @@
 
 exports.MatrixProduct = MatrixProduct
 exports.Regression = Regression
+exports.multiply = multiply
 
 var numeric = require('numeric')
 
@@ -75,12 +76,10 @@ Regression.prototype.addObservation = function(options) {
 Regression.prototype.push = Regression.prototype.addObservation
 
 Regression.prototype.calculateCoefficients = function() {
-
   var xTx = this.transposeOfXTimesX.product
   var xTy = this.transposeOfXTimesY.product
-  var pseudoInverse = numeric.echelonize(xTx).I
-
-  return this.coefficients = numeric.dot(pseudoInverse, xTy)
+  var inv = numeric.inv(xTx)
+  return this.coefficients = numeric.dot(inv, xTy)
 }
 
 Regression.prototype.calculate = Regression.prototype.calculateCoefficients
@@ -107,4 +106,30 @@ Regression.prototype.hypothesize = function(options) {
   }
 
   return hypothesis
+}
+
+
+function multiply(lhs, rhs) {
+
+  var options = { numRows: lhs.length, numColumns: rhs[0].length }
+  var streamingProduct = new MatrixProduct(options)
+
+  for(var x = 0; x < rhs.length; x++) {
+
+    var lhsColumn = []
+
+    // Get the xth column of lhs.
+    for(var r = 0; r < lhs.length; r++)
+      lhsColumn.push(lhs[r][x])
+
+    // Get the xth row of rhs.
+    var rhsRow = rhs[x]
+
+    streamingProduct.addRowAndColumn({
+      lhsColumn: lhsColumn,
+      rhsRow: rhsRow
+    })
+  }
+
+  return streamingProduct.product
 }

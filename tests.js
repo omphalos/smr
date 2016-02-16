@@ -2,6 +2,8 @@
 
 var test = require('tape')
 var smr = require('./smr.js')
+var numeric = require('numeric')
+var multiply = smr.multiply
 var MatrixProduct = smr.MatrixProduct
 var Regression = smr.Regression
 
@@ -25,25 +27,52 @@ test('should calculate product of 2x3 * 3x2', function(t) {
   t.end()
 })
 
-test('should calculate streaming regression', function(t) {
+// https://github.com/omphalos/smr/issues/2
+test("should regress 2 x's", function(t) {
 
-  var x = [[1,2,3],[4,5,6],[7,8,9],[10,11,12]]
-  var y = [[13,14],[15,16],[17,18],[19,20]]
-  var options = { numX: 3, numY: 2 }
-  var streamingRegression = new Regression(options)
+  var regression2 = new smr.Regression({ numX: 2, numY: 1 })
 
-  addObservations(streamingRegression, { x: x, y: y })
+  regression2.push({ x: [1/3,0.5], y: [2] })
+  regression2.push({ x: [2/3,0.5], y: [3] })
+  regression2.push({ x: [3/3,0.5], y: [4] })
 
-  var streamingCoefficients = streamingRegression.calculateCoefficients()
-  var xTranspose = numeric.transpose(x)
-  var xTransposeX = numeric.dot(xTranspose, x)
-  var xTransposeY = numeric.dot(xTranspose, y)
-  var pseudoInverse = numeric.echelonize(xTransposeX).I
-  var numericResult = numeric.dot(pseudoInverse, xTransposeY)
-  var expected = JSON.stringify(numericResult)
-  var actual = JSON.stringify(streamingCoefficients)
+  t.equals(
+    JSON.stringify(round(regression2.calculateCoefficients())),
+    JSON.stringify([[3],[2]]))
 
-  t.equals(actual, expected)
+  t.end()
+})
+
+// https://github.com/omphalos/smr/issues/2
+test("should regress 3 x's", function(t) {
+
+  var regression1 = new smr.Regression({ numX: 3, numY: 1 })
+
+  regression1.push({ x: [1/3,2,0.5], y: [2] })
+  regression1.push({ x: [2/3,4,0.5], y: [3] })
+  regression1.push({ x: [3/3,7,0.5], y: [4] })
+
+  t.equals(
+    JSON.stringify(round(regression1.calculateCoefficients())),
+    JSON.stringify([[3],[0],[2]]))
+
+  t.end()
+})
+
+// https://github.com/omphalos/smr/issues/2
+test("should regress 4 x's", function(t) {
+
+  var regression3 = new smr.Regression({ numX: 4, numY: 1 })
+
+  regression3.push({ x: [1/3,2,0.5,8], y: [2] })
+  regression3.push({ x: [2/3,4,0.5,3], y: [3] })
+  regression3.push({ x: [3/3,7,0.5,2], y: [4] })
+  regression3.push({ x: [4/3,7,0.5,2], y: [5] })
+
+  t.equals(
+    JSON.stringify(round(regression3.calculateCoefficients())),
+    JSON.stringify([[3],[0],[2],[0]]))
+
   t.end()
 })
 
@@ -102,48 +131,20 @@ test('should discard old coefficients', function(t) {
   regression.addObservation({ y: [0], x: [1] })
   var newCoefficients = regression.calculateCoefficients()
 
-  t.ok(JSON.stringify(newCoefficients) !== JSON.stringify(oldCoefficients))
+  t.notEqual(
+    JSON.stringify(newCoefficients),
+    JSON.stringify(oldCoefficients))
+
   t.end()
 })
-
-// Test for issue in numericjs library.
-/* test('should regress underdetermined system', function(t) {
-
-  var reg = new Regression({ numX: 2, numY: 1})
-  reg.push({ x: [1, 2], y: [3] })
-
-  var coefficients = reg.calculateCoefficients()
-  var firstCoefficient = coefficients[0][0]
-
-  t.ok(!isNaN(firstCoefficient))
-  t.end()
-}) */
 
 function testMatrixProduct(t, lhs, rhs) {
 
   var numericProduct = numeric.dot(lhs, rhs)
-  var options = { numRows: lhs.length, numColumns: rhs[0].length }
-  var streamingProduct = new MatrixProduct(options)
-
-  for(var x = 0; x < rhs.length; x++) {
-
-    var lhsColumn = []
-
-    // Get the xth column of lhs.
-    for(var r = 0; r < lhs.length; r++)
-      lhsColumn.push(lhs[r][x])
-
-    // Get the xth row of rhs.
-    var rhsRow = rhs[x]
-
-    streamingProduct.addRowAndColumn({
-      lhsColumn: lhsColumn,
-      rhsRow: rhsRow
-    })
-  }
+  var product = multiply(lhs, rhs)
 
   var expected = JSON.stringify(numericProduct)
-  var actual = JSON.stringify(streamingProduct.product)
+  var actual = JSON.stringify(product)
 
   t.equals(actual, expected)
 }
@@ -155,3 +156,13 @@ function addObservations(streamingRegression, options) {
       y: options.y[x]
     })
 }
+
+function round(coefficients) {
+  var factor = 100000
+  return coefficients.map(function(row) {
+    return row.map(function(c) {
+      return Math.round(c * factor) / factor
+    })
+  })
+}
+
