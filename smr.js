@@ -4,7 +4,7 @@ exports.MatrixProduct = MatrixProduct
 exports.Regression = Regression
 exports.multiply = multiply
 
-var numeric = require('./numeric')
+var numeric = require('numeric')
 
 function MatrixProduct(options) {
 
