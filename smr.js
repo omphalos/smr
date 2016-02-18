@@ -8,22 +8,19 @@ var numeric = require('numeric')
 
 function MatrixProduct(options) {
 
-  this.product = []
+  this.product = new Array(options.numRows)
 
-  for(var r = 0; r < options.numRows; r++) {
-
-    var row = []
-    this.product.push(row)
-
-    for(var c = 0; c < options.numColumns; c++)
-      row.push(0)
+  for(var r = 0; r !== options.numRows; r++) {
+    var row = new Array(options.numColumns);
+    this.product[r] = row;
+    for(var c = 0; c !== options.numColumns; c++) row[c] = 0;
   }
 }
 
 MatrixProduct.prototype.addRowAndColumn = function(options) {
 
-  for(var c = 0; c < options.lhsColumn.length; c++)
-    for(var r = 0; r < options.rhsRow.length; r++)
+  for(var c = 0; c !== options.lhsColumn.length; c++)
+    for(var r = 0; r !== options.rhsRow.length; r++)
       this.product[c][r] += options.lhsColumn[c] * options.rhsRow[r]
 }
 
@@ -31,17 +28,17 @@ MatrixProduct.prototype.push = MatrixProduct.prototype.addRowAndColumn
 
 function Regression(options) {
 
-  if(!options)
-    throw new Error('missing options')
+  // if(!options)
+  //   throw new Error('missing options')
 
-  if(!('numX' in options))
-    throw new Error(
-      'you must give the width of the X dimension as the property numX')
+  // if(!('numX' in options))
+  //   throw new Error(
+  //     'you must give the width of the X dimension as the property numX')
 
 
-  if(!('numY' in options))
-    throw new Error(
-      'you must give the width of the X dimension as the property numY')
+  // if(!('numY' in options))
+  //   throw new Error(
+  //     'you must give the width of the X dimension as the property numY')
 
   this.transposeOfXTimesX = new MatrixProduct({
     numRows: options.numX,
@@ -99,9 +96,9 @@ Regression.prototype.hypothesize = function(options) {
 
   var hypothesis = []
 
-  for(var x = 0; x < this.coefficients.length; x++) {
+  for(var x = 0; x !== this.coefficients.length; x++) {
     var coefficientRow = this.coefficients[x]
-    for(var y = 0; y < coefficientRow.length; y++)
+    for(var y = 0; y !== coefficientRow.length; y++)
       hypothesis[y] = (hypothesis[y] || 0) + coefficientRow[y] * options.x[x]
   }
 
@@ -114,12 +111,12 @@ function multiply(lhs, rhs) {
   var options = { numRows: lhs.length, numColumns: rhs[0].length }
   var streamingProduct = new MatrixProduct(options)
 
-  for(var x = 0; x < rhs.length; x++) {
+  for(var x = 0; x !== rhs.length; x++) {
 
     var lhsColumn = []
 
     // Get the xth column of lhs.
-    for(var r = 0; r < lhs.length; r++)
+    for(var r = 0; r !== lhs.length; r++)
       lhsColumn.push(lhs[r][x])
 
     // Get the xth row of rhs.
