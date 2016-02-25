@@ -76,4 +76,8 @@ You can run a simple performance test with:
 
     node ./performance.js 500
 
-This will show the performance with a harder (500-dimensional) problem.  The bottleneck with higher-dimensional problems is the pseudoinverse calculation, which is something like N^3.  As an example, on a t machine, 500 dimensions takes over 11 seconds, whereas a 200-dimensional problems takes ~100 milliseconds.
+This will show the performance with a harder (500-dimensional) problem.
+The bottleneck with higher-dimensional problems
+is the pseudoinverse calculation, which is something like N^3.
+As an example, on a test machine, 500 dimensions takes over 11 seconds,
+whereas a 200-dimensional problems takes ~100 milliseconds.
