@@ -10,10 +10,11 @@ function MatrixProduct(options) {
 
   this.product = new Array(options.numRows)
 
-  for(var r = 0; r !== options.numRows; r++) {
-    var row = new Array(options.numColumns);
-    this.product[r] = row;
-    for(var c = 0; c !== options.numColumns; c++) row[c] = 0;
+  for(var r = 0; r < options.numRows; r++) {
+    var row = new Array(options.numColumns)
+    this.product[r] = row
+    for(var c = 0; c < options.numColumns; c++)
+      row[c] = 0
   }
 }
 
