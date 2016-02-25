@@ -8,15 +8,12 @@ var numeric = require('numeric')
 
 function MatrixProduct(options) {
 
-  this.product = []
+  this.product = new Array(options.numRows)
 
-  for(var r = 0; r < options.numRows; r++) {
-
-    var row = []
-    this.product.push(row)
-
-    for(var c = 0; c < options.numColumns; c++)
-      row.push(0)
+  for(var r = 0; r !== options.numRows; r++) {
+    var row = new Array(options.numColumns);
+    this.product[r] = row;
+    for(var c = 0; c !== options.numColumns; c++) row[c] = 0;
   }
 }
 
