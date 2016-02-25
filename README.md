@@ -70,9 +70,9 @@ and multiply this by the readily-available X' * Y.
 
 Then you can run unit tests with:
 
-    npm t
+    npm test
 
-You can run a simple performance t with:
+You can run a simple performance test with:
 
     node ./performance.js 500
 
