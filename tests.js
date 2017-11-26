@@ -138,6 +138,21 @@ test('should discard old coefficients', function(t) {
   t.end()
 })
 
+test('should throw on invalid options', function(t) {
+  testThrows(t, function() { new Regression() })
+  testThrows(t, function() { new Regression({}) })
+  testThrows(t, function() { new Regression({ numX: 1 }) })
+  var regression = new Regression({ numX: 1, numY: 1 })
+  testThrows(t, function() { regression.addObservation() })
+  testThrows(t, function() { regression.addObservation({}) })
+  testThrows(t, function() { regression.addObservation({ x: 1, y: 1 }) })
+  testThrows(t, function() { regression.addObservation({ x: [1] }) })
+  testThrows(t, function() { regression.addObservation({ y: [1] }) })
+  testThrows(t, function() { regression.hypothesize() })
+  testThrows(t, function() { regression.hypothesize({ x: 1 }) })
+  t.end()
+})
+
 function testMatrixProduct(t, lhs, rhs) {
 
   var numericProduct = numeric.dot(lhs, rhs)
@@ -166,3 +181,12 @@ function round(coefficients) {
   })
 }
 
+function testThrows(t, fn) {
+  var threw = false
+  try {
+    fn()
+  } catch(err) {
+    threw = true
+  }
+  t.equals(true, threw)
+}

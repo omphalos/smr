@@ -1,25 +1,12 @@
 'use strict'
 
-exports.MatrixProduct = MatrixProduct
-exports.Regression = Regression
-exports.multiply = multiply
-
-var numeric = require('numeric')
+var rref = require('rref')
 
 function MatrixProduct(options) {
-
-  this.product = new Array(options.numRows)
-
-  for(var r = 0; r < options.numRows; r++) {
-    var row = new Array(options.numColumns)
-    this.product[r] = row
-    for(var c = 0; c < options.numColumns; c++)
-      row[c] = 0
-  }
+  this.product = squareMatrix(options)
 }
 
 MatrixProduct.prototype.addRowAndColumn = function(options) {
-
   for(var c = 0; c < options.lhsColumn.length; c++)
     for(var r = 0; r < options.rhsRow.length; r++)
       this.product[c][r] += options.lhsColumn[c] * options.rhsRow[r]
@@ -50,9 +37,14 @@ function Regression(options) {
     numRows: options.numX,
     numColumns: options.numY
   })
+
+  this.identity = identity(options.numX)
 }
 
 Regression.prototype.addObservation = function(options) {
+
+  if(!options)
+    throw new Error('missing options')
 
   if(!(options.x instanceof Array) || !(options.y instanceof Array))
     throw new Error('x and y must be given as arrays')
@@ -76,8 +68,9 @@ Regression.prototype.push = Regression.prototype.addObservation
 Regression.prototype.calculateCoefficients = function() {
   var xTx = this.transposeOfXTimesX.product
   var xTy = this.transposeOfXTimesY.product
-  var inv = numeric.inv(xTx)
-  return this.coefficients = numeric.dot(inv, xTy)
+  var inv = inverse(xTx, this.identity)
+  this.coefficients = multiply(inv, xTy)
+  return this.coefficients
 }
 
 Regression.prototype.calculate = Regression.prototype.calculateCoefficients
@@ -106,6 +99,25 @@ Regression.prototype.hypothesize = function(options) {
   return hypothesis
 }
 
+exports.MatrixProduct = MatrixProduct
+exports.Regression = Regression
+exports.multiply = multiply
+
+function inverse(matrix, identity) {
+  var size = matrix.length
+  var result = new Array(size)
+  for(var i = 0; i < size; i++)
+    result[i] = matrix[i].concat(identity[i])
+  result = rref(result)
+  for(var i = 0; i < size; i++) result[i].splice(0, size)
+  return result
+}
+
+function identity(size) {
+  var matrix = squareMatrix({ numRows: size, numColumns: size })
+  for(var i = 0; i < size; i++) matrix[i][i] = 1
+  return matrix
+}
 
 function multiply(lhs, rhs) {
 
@@ -130,4 +142,16 @@ function multiply(lhs, rhs) {
   }
 
   return streamingProduct.product
+}
+
+function squareMatrix(options) {
+  var matrix = new Array(options.numRows)
+  for(var r = 0; r < options.numRows; r++) {
+    var row = new Array(options.numColumns)
+    matrix[r] = row
+    for(var c = 0; c < options.numColumns; c++) {
+      row[c] = 0
+    }
+  }
+  return matrix
 }
